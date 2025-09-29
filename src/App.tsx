@@ -9,6 +9,7 @@ import Dashboard from "./pages/Dashboard";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import "./App.css";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
 // Create a client outside of the component
 const queryClient = new QueryClient({
@@ -21,6 +22,8 @@ const queryClient = new QueryClient({
 });
 
 function App() {
+	console.log("📀", import.meta.env.VITE_NODE_ENV);
+
 	return (
 		<QueryClientProvider client={queryClient}>
 			<Router>
@@ -33,6 +36,7 @@ function App() {
 					</Routes>
 				</div>
 			</Router>
+			<ReactQueryDevtools initialIsOpen={false} />
 		</QueryClientProvider>
 	);
 }
