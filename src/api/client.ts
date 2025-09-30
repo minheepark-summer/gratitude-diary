@@ -1,3 +1,9 @@
+import axios, {
+	type AxiosInstance,
+	type AxiosRequestConfig,
+	type AxiosResponse,
+} from "axios";
+
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
 const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
@@ -8,68 +14,100 @@ export interface ApiResponse<T> {
 	success: boolean;
 }
 
-// 기본 fetch 클라이언트
-class ApiClient {
-	private baseURL: string;
+// Axios 클라이언트 생성 함수
+const createApiClient = (baseURL: string): AxiosInstance => {
+	const client = axios.create({
+		baseURL,
+		headers: {
+			"Content-Type": "application/json",
+			apikey: SUPABASE_ANON_KEY || "",
+			Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+		},
+	});
 
-	constructor(baseURL: string) {
-		this.baseURL = baseURL;
-	}
+	// 요청 인터셉터 (디버깅용)
+	client.interceptors.request.use(
+		(config) => {
+			console.log("🚀 API 요청:", {
+				url: config.url,
+				method: config.method,
+				headers: config.headers,
+				data: config.data,
+			});
+			return config;
+		},
+		(error) => {
+			console.error("❌ 요청 에러:", error);
+			return Promise.reject(error);
+		},
+	);
 
-	private async request<T>(
-		endpoint: string,
-		options: RequestInit = {},
-	): Promise<T> {
-		const url = `${this.baseURL}${endpoint}`;
+	// 응답 인터셉터
+	client.interceptors.response.use(
+		(response) => {
+			console.log("✅ API 응답:", {
+				status: response.status,
+				data: response.data,
+			});
+			return response;
+		},
+		(error) => {
+			console.error("❌ 응답 에러:", {
+				status: error.response?.status,
+				message: error.response?.data?.message || error.message,
+				data: error.response?.data,
+			});
+			return Promise.reject(error);
+		},
+	);
 
-		const config: RequestInit = {
-			headers: {
-				"Content-Type": "application/json",
-				apikey: SUPABASE_ANON_KEY || "",
-				...options.headers,
-			},
-			...options,
-		};
+	return client;
+};
 
-		// 디버깅을 위한 콘솔 로그
-		console.log("API Key:", SUPABASE_ANON_KEY);
-		console.log("Request URL:", url);
-		console.log("Headers:", config.headers);
+// API 클라이언트 인스턴스
+const axiosClient = createApiClient(SUPABASE_URL);
 
-		try {
-			const response = await fetch(url, config);
-
-			if (!response.ok) {
-				const errorData = await response.json();
-				throw new Error(
-					errorData.msg || `HTTP error! status: ${response.status}`,
-				);
-			}
-
-			const data = await response.json();
-			return data;
-		} catch (error) {
-			console.error("API 요청 실패:", error);
-			throw error;
-		}
-	}
-
-	async get<T>(endpoint: string, options?: RequestInit): Promise<T> {
-		return this.request<T>(endpoint, { ...options, method: "GET" });
-	}
+// API 함수들
+export const api = {
+	async get<T>(endpoint: string, config?: AxiosRequestConfig): Promise<T> {
+		const response: AxiosResponse<T> = await axiosClient.get(endpoint, config);
+		return response.data;
+	},
 
 	async post<T>(
 		endpoint: string,
-		data?: any,
-		options?: RequestInit,
+		data?: unknown,
+		config?: AxiosRequestConfig,
 	): Promise<T> {
-		return this.request<T>(endpoint, {
-			...options,
-			method: "POST",
-			body: data ? JSON.stringify(data) : undefined,
-		});
-	}
-}
+		const response: AxiosResponse<T> = await axiosClient.post(
+			endpoint,
+			data,
+			config,
+		);
+		return response.data;
+	},
 
-// API 클라이언트 인스턴스 생성
-export const apiClient = new ApiClient(SUPABASE_URL);
+	async put<T>(
+		endpoint: string,
+		data?: unknown,
+		config?: AxiosRequestConfig,
+	): Promise<T> {
+		const response: AxiosResponse<T> = await axiosClient.put(
+			endpoint,
+			data,
+			config,
+		);
+		return response.data;
+	},
+
+	async delete<T>(endpoint: string, config?: AxiosRequestConfig): Promise<T> {
+		const response: AxiosResponse<T> = await axiosClient.delete(
+			endpoint,
+			config,
+		);
+		return response.data;
+	},
+};
+
+// 기존 호환성을 위한 export
+export const apiClient = api;

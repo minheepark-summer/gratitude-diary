@@ -5,9 +5,9 @@ import {
 	BrowserRouter as Router,
 	Routes,
 } from "react-router-dom";
-import Dashboard from "./pages/Dashboard";
-import Home from "./pages/Home";
+import Diary from "./pages/Diary";
 import Login from "./pages/Login";
+import Profile from "./pages/Profile";
 import "./App.css";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
@@ -29,10 +29,11 @@ function App() {
 			<Router>
 				<div className="App">
 					<Routes>
-						<Route path="/" element={<Home />} />
+						<Route path="/" element={<Navigate to="/login" replace />} />
 						<Route path="/login" element={<Login />} />
-						<Route path="/dashboard" element={<Dashboard />} />
-						<Route path="*" element={<Navigate to="/" replace />} />
+						<Route path="/profile" element={<Profile />} />
+						<Route path="/diary" element={<Diary />} />
+						<Route path="*" element={<Navigate to="/login" replace />} />
 					</Routes>
 				</div>
 			</Router>

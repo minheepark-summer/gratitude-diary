@@ -27,3 +27,25 @@ export const useLogin = () => {
 		},
 	});
 };
+
+// 로그아웃 mutation
+export const useLogout = () => {
+	const queryClient = useQueryClient();
+
+	return useMutation({
+		mutationFn: () => loginApi.logout(),
+		onSuccess: () => {
+			// 로그아웃 성공 시 토큰 제거 및 캐시 초기화
+			localStorage.removeItem("access_token");
+			localStorage.removeItem("refresh_token");
+			queryClient.removeQueries({ queryKey: authKeys.all });
+		},
+		onError: (error) => {
+			console.error("로그아웃 API 실패:", error);
+			// API 실패해도 로컬 상태는 정리 (토큰이 만료되었을 수 있음)
+			localStorage.removeItem("access_token");
+			localStorage.removeItem("refresh_token");
+			queryClient.removeQueries({ queryKey: authKeys.all });
+		},
+	});
+};

@@ -1,5 +1,4 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import React from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { useLogin } from "@/api/loginHooks";
@@ -20,7 +19,6 @@ import {
 	FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { type LoginFormData, loginSchema } from "@/lib/schemas";
 
 export function LoginForm() {
@@ -38,14 +36,14 @@ export function LoginForm() {
 	const onSubmit = async (data: LoginFormData) => {
 		try {
 			await loginMutation.mutateAsync(data);
-			navigate("/dashboard");
+			navigate("/diary");
 		} catch (error) {
 			console.error("로그인 실패:", error);
 		}
 	};
 
 	return (
-		<div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+		<div className="flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
 			<Card className="w-full max-w-md">
 				<CardHeader className="space-y-1">
 					<CardTitle className="text-2xl font-bold text-center">
@@ -69,7 +67,7 @@ export function LoginForm() {
 								control={form.control}
 								name="email"
 								render={({ field }) => (
-									<FormItem>
+									<FormItem className="flex flex-col text-left">
 										<FormLabel>이메일</FormLabel>
 										<FormControl>
 											<Input
@@ -87,7 +85,7 @@ export function LoginForm() {
 								control={form.control}
 								name="password"
 								render={({ field }) => (
-									<FormItem>
+									<FormItem className="flex flex-col text-left">
 										<FormLabel>비밀번호</FormLabel>
 										<FormControl>
 											<Input
@@ -100,28 +98,6 @@ export function LoginForm() {
 									</FormItem>
 								)}
 							/>
-
-							<div className="flex items-center justify-between">
-								<div className="flex items-center space-x-2">
-									<input
-										id="remember-me"
-										name="remember-me"
-										type="checkbox"
-										className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
-									/>
-									<Label htmlFor="remember-me" className="text-sm font-medium">
-										로그인 상태 유지
-									</Label>
-								</div>
-
-								<Button
-									type="button"
-									variant="link"
-									onClick={() => navigate("/forgot-password")}
-								>
-									비밀번호를 잊으셨나요?
-								</Button>
-							</div>
 
 							<Button
 								type="submit"

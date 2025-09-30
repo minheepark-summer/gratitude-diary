@@ -35,8 +35,12 @@ export const registerSchema = z
 
 export type RegisterFormData = z.infer<typeof registerSchema>;
 
+// 다이어리 폼 스키마
+export const diarySchema = z.object({
+	title: z.string().min(1, "제목을 입력해주세요"),
+	content: z.string().min(1, "내용을 입력해주세요"),
+	tags: z.string().default(""),
+	is_public: z.boolean().default(false),
+});
 
-
-
-
-
+export type DiaryFormData = z.infer<typeof diarySchema>;

@@ -84,12 +84,12 @@ const FormLabel = React.forwardRef<
 	React.ElementRef<typeof LabelPrimitive.Root>,
 	React.ComponentPropsWithoutRef<typeof LabelPrimitive.Root>
 >(({ className, ...props }, ref) => {
-	const { error, fieldState } = useFormField();
+	const { fieldState } = useFormField();
 
 	return (
 		<Label
 			ref={ref}
-			className={cn(error && "text-destructive", className)}
+			className={cn(fieldState.error && "text-destructive", className)}
 			{...props}
 		/>
 	);
@@ -100,8 +100,6 @@ const FormControl = React.forwardRef<
 	React.ElementRef<typeof Slot>,
 	React.ComponentPropsWithoutRef<typeof Slot>
 >(({ ...props }, ref) => {
-	const { error, fieldState } = useFormField();
-
 	return <Slot ref={ref} {...props} />;
 });
 FormControl.displayName = "FormControl";
@@ -110,8 +108,6 @@ const FormDescription = React.forwardRef<
 	HTMLParagraphElement,
 	React.HTMLAttributes<HTMLParagraphElement>
 >(({ className, ...props }, ref) => {
-	const { formState } = useFormField();
-
 	return (
 		<p
 			ref={ref}
@@ -127,8 +123,8 @@ const FormMessage = React.forwardRef<
 	HTMLParagraphElement,
 	React.HTMLAttributes<HTMLParagraphElement>
 >(({ className, children, ...props }, ref) => {
-	const { error, fieldState } = useFormField();
-	const body = error ? String(error?.message) : children;
+	const { fieldState } = useFormField();
+	const body = fieldState.error ? String(fieldState.error?.message) : children;
 
 	if (!body) {
 		return null;
@@ -147,7 +143,6 @@ const FormMessage = React.forwardRef<
 FormMessage.displayName = "FormMessage";
 
 export {
-	useFormField,
 	Form,
 	FormItem,
 	FormLabel,
@@ -156,9 +151,3 @@ export {
 	FormMessage,
 	FormField,
 };
-
-
-
-
-
-

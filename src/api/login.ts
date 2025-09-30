@@ -26,4 +26,20 @@ export const loginApi = {
 	login: async (credentials: LoginRequest): Promise<LoginResponse> => {
 		return apiClient.post("/auth/v1/token?grant_type=password", credentials);
 	},
+	logout: async (): Promise<void> => {
+		const accessToken = localStorage.getItem("access_token");
+		if (!accessToken) {
+			throw new Error("No access token found");
+		}
+
+		return apiClient.post(
+			"/auth/v1/logout",
+			{},
+			{
+				headers: {
+					Authorization: `Bearer ${accessToken}`,
+				},
+			},
+		);
+	},
 };
