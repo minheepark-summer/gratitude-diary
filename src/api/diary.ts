@@ -5,7 +5,6 @@ export interface DiaryData {
 	title: string;
 	content: string;
 	tags?: string[];
-	is_public: boolean;
 }
 
 // 다이어리 응답 타입

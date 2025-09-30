@@ -16,12 +16,13 @@ export interface ApiResponse<T> {
 
 // Axios 클라이언트 생성 함수
 const createApiClient = (baseURL: string): AxiosInstance => {
+	const accessToken = localStorage.getItem("access_token");
 	const client = axios.create({
 		baseURL,
 		headers: {
 			"Content-Type": "application/json",
 			apikey: SUPABASE_ANON_KEY || "",
-			Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+			Authorization: `Bearer ${accessToken}`,
 		},
 	});
 

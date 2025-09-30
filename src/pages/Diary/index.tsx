@@ -36,7 +36,6 @@ const Diary: React.FC = () => {
 			title: "",
 			content: "",
 			tags: "",
-			is_public: false,
 		},
 	});
 
@@ -50,7 +49,6 @@ const Diary: React.FC = () => {
 				title: data.title,
 				content: data.content,
 				tags,
-				is_public: false,
 			},
 			{
 				onSuccess: () => {
